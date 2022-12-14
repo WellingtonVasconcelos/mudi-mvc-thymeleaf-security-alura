@@ -12,7 +12,7 @@ public class RequisicaoNovoPedido {
 	//NotBlank.requisicaoPedido.nomeProduto=cammpo deve ser preenchido
 	@NotBlank
 	@Size(min = 5, max = 50)
-private String nomeProduto;
+	private String nomeProduto;
 	
 	@NotBlank
 	private String urlProduto;
