@@ -18,19 +18,21 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(request -> {
-                try {
-                    request.anyRequest().authenticated();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            })
+            .authorizeHttpRequests()
+            .antMatchers("/home/**")
+            	.permitAll()
+            .anyRequest()
+            	.authenticated()
+            .and()
             .formLogin(form -> form
             		.loginPage("/login")
-            		.defaultSuccessUrl("/home", true)
+            		.defaultSuccessUrl("/usuario/pedido", true)
             		.permitAll()
             		)
-            	.logout(logout -> logout.logoutUrl("/logout"))
+            	.logout(logout -> {
+            		logout.logoutUrl("/logout")
+            		.logoutSuccessUrl("/home");
+            	})
         		.csrf().disable();
 
         return http.build();

@@ -16,16 +16,29 @@ import br.com.wellington.mvc.mudi.model.StatusPedido;
 import br.com.wellington.mvc.mudi.repository.PedidoRepository;
 
 @Controller
-@RequestMapping("/home")
-public class HomeController {
+@RequestMapping("usuario")
+public class UsuarioController {
 	
 	@Autowired
 	private PedidoRepository pedidosRepository;
 	
-	@GetMapping
+	@GetMapping("pedido")
 	public String home(Model model, Principal principal) {
-		List<Pedido> pedidos = pedidosRepository.findByStatus(StatusPedido.ENTREGUE);
-		model.addAttribute("pedidos",pedidos);
-		return "home";
+		List<Pedido> pedidos = pedidosRepository.findAllByUser(principal.getName());
+		model.addAttribute("pedidos", pedidos);
+		return "usuario/home";
 	}
+	@GetMapping("pedido/{status}")
+	public String porStatus(@PathVariable("status") String status, Model model, Principal principal) {
+		List<Pedido> pedidos = pedidosRepository.findByStatusAndUser(StatusPedido.valueOf(status.toUpperCase()), principal.getName());
+		model.addAttribute("pedidos", pedidos);
+		model.addAttribute("status", status);
+		return "usuario/home";
+	}
+	
+	@ExceptionHandler(IllegalArgumentException.class)
+	public String onError() {
+		return "redirect:/usuario/home";
+	}
+
 }
