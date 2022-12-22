@@ -1,35 +1,31 @@
-package br.com.wellington.mvc.mudi.controller;
+package br.com.wellington.mvc.mudi.api;
 
-import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import br.com.wellington.mvc.mudi.model.Pedido;
 import br.com.wellington.mvc.mudi.model.StatusPedido;
 import br.com.wellington.mvc.mudi.repository.PedidoRepository;
 
-@Controller
-@RequestMapping("/home")
-public class HomeController {
-	
+
+@RestController
+@RequestMapping("/api/pedidos")
+public class PedidosRest {
+
 	@Autowired
 	private PedidoRepository pedidoRepository;
 	
-	@GetMapping
-	public String home(Model model, Principal principal) {
-		Sort sort = Sort.by("dataDaEntrega").descending();
+	@GetMapping("aguardando")
+	public List<Pedido> getPedidosAguardandoOfertas() {
+		Sort sort = Sort.by("id").descending();
 		PageRequest paginacao = PageRequest.of(0, 10, sort);
 		
-		List<Pedido> pedidos = pedidoRepository.findByStatus(StatusPedido.ENTREGUE, paginacao);
-		model.addAttribute("pedidos", pedidos);
-		return "home";
+		return pedidoRepository.findByStatus(StatusPedido.AGUARDANDO, paginacao);
 	}
-	
 }
